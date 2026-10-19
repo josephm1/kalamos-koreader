@@ -9,3 +9,8 @@
 - Source-only credential-pattern scan: no matches. No private books, notes, captures, certificates, machine settings or build artifacts are tracked.
 
 A fresh full KOReader engine/APK build and physical acceptance are not part of this source publication. User owns panel, pen, rotation, navigation and app-switch testing. Existing device reader is unchanged.
+
+Current-source recheck on 19 October 2026: plugin/engine/native code matches the active workspace.
+Handwriting Lua, 29 TOC sharing checks, eight Node integration checks and native module tests/builds
+pass again. Shared ink guide and module READMEs refreshed; no executable reader changes or device
+installation. Manifest covers the complete tracked source plus the new READMEs.

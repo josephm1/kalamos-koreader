@@ -1,3 +1,11 @@
+## Current-source verification — 19 October 2026
+
+Verified the integration plugins, engine patches and native modules against the canonical current
+workspace: executable source is unchanged since the previous publication. Added current module
+READMEs and refreshed the shared ink contract. Notes-only toolbar/checkbox changes do not alter
+KOReader's implementation. Preserve the standalone build-script assertion in the export test.
+Source manifest refreshed; no book/notebook/device artifacts or runtime data included.
+
 # Source snapshot — 19 October 2026
 
 Current Kalamos KOReader integration and independent TOC/book sharing plugin, with selected native dependencies and complete patches. Canonical source was exported from the canonical Kalamos workspace (base commit67c98ce plus current working changes). This snapshot includes later reader/canvas/toolbar/lifecycle fixes rather than the older review plugin snapshots. No historical mapper, companion app, MyScript certificate, private book, notebook or device evidence is included.
