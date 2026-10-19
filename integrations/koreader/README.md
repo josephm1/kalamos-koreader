@@ -198,10 +198,9 @@ suite uses a fresh temporary directory and never reads device data or installed 
 
 ## Independent native build and storage configuration
 
-`python3 integrations/koreader/export-native.py /new/empty/output` creates a standalone source
-review export of only the three required native modules. Build with its wrapper, JDK17 and SDK34;
-no other Kalamos app or sibling checkout is needed. `package-native.py` packages only inputs
-verified against its SHA-256 manifest, excluding machine settings and build outputs.
+Build the native modules directly with `tools/build-native.sh`; `build.sh` packages them into
+KOReader. The repository and release source bundle already include the required modules and
+licences. The former review-only source-copy/export toolchain has been retired.
 
 The launcher adapter selects stock source/dependencies unless `-PkalamosInk=true` is explicit.
 Stock SDK18/no-vendor and enabled SDK29 builds have both compiled in debug and release; launcher-only

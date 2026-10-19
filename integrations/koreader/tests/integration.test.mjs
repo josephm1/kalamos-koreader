@@ -185,7 +185,3 @@ test('private asset revisions change when any native AAR changes', () => {
   const build = read('integrations/koreader/build.sh')
   assert.ok(build.indexOf('Old Lua-only asset revision detected') < build.indexOf('"$repo_root/tools/gradle.sh"'))
 })
-
-test('standalone native source exports contain licenses and exclude machine/build inputs', () => {
-  execFileSync('python3', [path.join(root, 'integrations/koreader/tests/export_tooling_test.py')], { cwd: root, stdio: 'pipe' })
-})
