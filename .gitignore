@@ -1,0 +1,15 @@
+.gradle/
+**/build/
+local.properties
+_upstream/
+__pycache__/
+*.pyc
+artifacts/
+dist/
+*.apk
+*.aar
+*.jks
+*.keystore
+.env
+.env.*
+*.log

@@ -1,0 +1,74 @@
+diff --git a/ffi/input_android.lua b/ffi/input_android.lua
+index 6dcae51d..4c085259 100644
+--- a/ffi/input_android.lua
++++ b/ffi/input_android.lua
+@@ -20,6 +20,17 @@ local input = {
+ 
+ local inputQueue = {}
+ 
++-- Device integrations may claim or reclassify a native Android MotionEvent before it is
++-- translated into Linux-style touch events and gestures. This is intentionally a single-owner
++-- seam: callers preserve and restore the previous filter when their input integration ends.
++local motionEventFilter
++function input.getMotionEventFilter()
++    return motionEventFilter
++end
++function input.setMotionEventFilter(filter)
++    motionEventFilter = filter
++end
++
+ local function genInputTimeval(ts)
+     local timev = { sec = 0, usec = 0 }
+     if ts then
+@@ -69,17 +80,18 @@ local TOOL_TYPE_MAP = {
+     [android.lib.AMOTION_EVENT_TOOL_TYPE_ERASER] = 2, -- TOOL_TYPE_ERASER
+ }
+ 
+-local function getToolType(event, index)
++local function getToolType(event, index, override)
++    if override ~= nil then return override end
+     local tool = android.lib.AMotionEvent_getToolType(event, index)
+     return TOOL_TYPE_MAP[tool] or 0 -- TOOL_TYPE_FINGER
+ end
+ 
+-local function genTouchDownEvent(event, slot, index)
++local function genTouchDownEvent(event, slot, index, tool_override)
+     local x = android.lib.AMotionEvent_getX(event, index)
+     local y = android.lib.AMotionEvent_getY(event, index)
+     local timev = genInputTimeval(android.lib.AMotionEvent_getEventTime(event))
+     genEmuEvent(C.EV_ABS, C.ABS_MT_SLOT, slot, timev)
+-    genEmuEvent(C.EV_ABS, C.ABS_MT_TOOL_TYPE, getToolType(event, index), timev)
++    genEmuEvent(C.EV_ABS, C.ABS_MT_TOOL_TYPE, getToolType(event, index, tool_override), timev)
+     genEmuEvent(C.EV_ABS, C.ABS_MT_TRACKING_ID, slot, timev)
+     genEmuEvent(C.EV_ABS, C.ABS_MT_POSITION_X, x, timev)
+     genEmuEvent(C.EV_ABS, C.ABS_MT_POSITION_Y, y, timev)
+@@ -135,6 +147,12 @@ end
+ --       AMOTION_EVENT_ACTION_DOWN & AMOTION_EVENT_ACTION_UP, so, use the source, Luke! c.f., TouchInputMapper::dispatchMotion @
+ -- https://android.googlesource.com/platform//frameworks/native/+/master/services/inputflinger/reader/mapper/TouchInputMapper.cpp
+ local function motionEventHandler(motion_event)
++    local consume, tool_override
++    if motionEventFilter then
++        consume, tool_override = motionEventFilter(motion_event)
++        if consume then return end
++    end
++
+     if android.isTouchscreenIgnored() then
+         return
+     end
+@@ -145,14 +163,14 @@ local function motionEventHandler(motion_event)
+         -- Happens on the *first* contact of a gesture (data is always at index 0),
+         local slot = android.lib.AMotionEvent_getPointerId(motion_event, 0)
+         setPointerDown(slot, true)
+-        genTouchDownEvent(motion_event, slot, 0)
++        genTouchDownEvent(motion_event, slot, 0, tool_override)
+     elseif flags == C.AMOTION_EVENT_ACTION_POINTER_DOWN then
+         local pointer_index = bit.rshift(
+                                         bit.band(action, C.AMOTION_EVENT_ACTION_POINTER_INDEX_MASK),
+                                         C.AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT)
+         local slot = android.lib.AMotionEvent_getPointerId(motion_event, pointer_index)
+         setPointerDown(slot, true)
+-        genTouchDownEvent(motion_event, slot, pointer_index)
++        genTouchDownEvent(motion_event, slot, pointer_index, tool_override)
+     elseif flags == C.AMOTION_EVENT_ACTION_UP then
+         -- Happens once the *last* contact of a gesture has been lifted (data is always at index 0)
+         local slot = android.lib.AMotionEvent_getPointerId(motion_event, 0)

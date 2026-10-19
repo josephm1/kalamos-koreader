@@ -1,0 +1,19 @@
+diff --git a/app/src/main/java/org/koreader/launcher/MainApp.kt b/app/src/main/java/org/koreader/launcher/MainApp.kt
+--- a/app/src/main/java/org/koreader/launcher/MainApp.kt
++++ b/app/src/main/java/org/koreader/launcher/MainApp.kt
+@@ -45,5 +45,14 @@ class MainApp : Application() {
+ 
+         // crash report
+         fun crashReport(context: Context, reason: String? = null) {
+-            writeLogToFile(crash_report_path, true)
++            // Debug builds keep logcat and an ADB-retrievable copy across reporter restart.
++            // Release builds retain stock report writing/clearing and create no extra copy.
++            writeLogToFile(crash_report_path, !BuildConfig.DEBUG)
++            if (BuildConfig.DEBUG) {
++                runCatching {
++                    context.getExternalFilesDir(null)?.let { directory ->
++                        File(crash_report_path).copyTo(File(directory, "koreader-crash.log"), overwrite = true)
++                    }
++                }
++            }
+             val reportIntent = Intent(context, CrashReportActivity::class.java)

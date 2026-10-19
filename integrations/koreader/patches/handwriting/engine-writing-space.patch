@@ -1,0 +1,20 @@
+--- a/cre.cpp
++++ b/cre.cpp
+@@ -2870,6 +2870,8 @@
+     return 1;
+ }
+ 
++#include "writingspace.inc"
++
+ static int getHTMLFromXPointer(lua_State *L) {
+     CreDocument *doc = (CreDocument*) luaL_checkudata(L, 1, "credocument");
+     const char* xp = luaL_checkstring(L, 2);
+@@ -4552,6 +4554,8 @@
+     {"getDocumentFileContent", getDocumentFileContent},
+     {"getTextFromXPointer", getTextFromXPointer},
+     {"getHTMLFromXPointer", getHTMLFromXPointer},
++    {"getWritingSpaceInfo", getWritingSpaceInfo},
++    {"getWritingLayoutHash", getWritingLayoutHash},
+     {"getHTMLFromXPointers", getHTMLFromXPointers},
+     {"getStylesheetsMatchingRulesets", getStylesheetsMatchingRulesets},
+     {"getPageLinks", getPageLinks},

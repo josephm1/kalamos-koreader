@@ -1,0 +1,23 @@
+{
+  "checked": "2026-10-15",
+  "repositories": {
+    "koreader": {
+      "url": "https://github.com/koreader/koreader.git",
+      "commit": "892034c96ef6c4f8606809133d16bb604f8853c1"
+    },
+    "base": {
+      "url": "https://github.com/koreader/koreader-base.git",
+      "commit": "51bc7096973bc8eab5f2fd6ca3ae9a0227c8905e",
+      "submodule": "base"
+    },
+    "launcher": {
+      "url": "https://github.com/koreader/android-luajit-launcher.git",
+      "commit": "e0c3c861b043966a8d845392f10d64da095f99bc",
+      "submodule": "platform/android/luajit-launcher"
+    }
+  },
+  "description_policy": {
+    "path": ".github/pull_request_template.md",
+    "text": "This pull request may be closed if you did not write the description explaining the change yourself. A tool does not know why you want to make this change."
+  }
+}

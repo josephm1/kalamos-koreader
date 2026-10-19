@@ -1,0 +1,28 @@
+--- a/frontend/ui/widget/touchmenu.lua
++++ b/frontend/ui/widget/touchmenu.lua
+@@ -538,7 +538,7 @@
+ 
+     local icons = {}
+     for _, v in ipairs(self.tab_item_table) do
+-        table.insert(icons, v.icon)
++        table.insert(icons, v.icon_func and v.icon_func() or v.icon)
+     end
+     self.bar = TouchMenuBar:new{
+         width = self.width, -- will impose width and push left and right borders offscreen
+@@ -774,6 +774,16 @@
+ end
+ 
+ function TouchMenu:switchMenuTab(tab_num)
++    -- Action tabs are explicitly activated, never remembered on automatic menu opening.
++    local tab = self.tab_item_table[tab_num]
++    if tab and tab.activate_callback then
++        if self.touch_menu_callback then
++            self.touch_menu_callback()
++        end
++        self:onClose()
++        UIManager:tickAfterNext(tab.activate_callback)
++        return
++    end
+     if self.tab_item_table[tab_num].remember ~= false then
+         self.last_index = tab_num
+     end
