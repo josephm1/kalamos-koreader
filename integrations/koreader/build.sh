@@ -60,6 +60,7 @@ check_patch "$launcher_dir" handwriting/launcher-kalamos-bridge.patch
 check_patch "$launcher_dir" android-diagnostics/launcher-readable-crash-report.patch
 check_patch "$koreader_dir/base" android-input/android-native-motion-filter.patch
 check_patch "$koreader_dir" private-build/android-kalamos-asset-revision.patch
+check_patch "$koreader_dir/base" packaging/android-glib-runtime-paths.patch
 if $check_only; then
   echo "All reader/native patches verified; no build or checkout mutation performed."
   exit 0
@@ -96,6 +97,8 @@ writing_revision="$(sha256sum "$integration_dir/engine/writingspace.inc" \
   "$integration_dir"/kalamos.koplugin/resources/icons/*.svg | sha256sum | cut -c1-16)"
 printf 'return "%s"\n' "$writing_revision" > "$koreader_dir/plugins/kalamos.koplugin/writing-revision.lua"
 cp "$integration_dir"/kalamos.koplugin/resources/icons/kalamos*.svg "$koreader_dir/resources/icons/mdlight/"
+mkdir -p "$launcher_dir/assets/kalamos-notices"
+cp -a "$integration_dir/distribution-notices/." "$launcher_dir/assets/kalamos-notices/"
 echo "Kalamos plugin and optional bridge prepared in $koreader_dir"
 echo "Normal build: GRADLE_FLAGS='-PkalamosInk=true -PkalamosDevice=$device' ./kodev build android-arm64"
 echo "Debug build:  GRADLE_FLAGS='-PkalamosInk=true -PkalamosDevice=$device' ./kodev build android-arm64 --debug"

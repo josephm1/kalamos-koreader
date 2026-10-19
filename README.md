@@ -89,5 +89,8 @@ Back up your reader settings and annotations before testing experimental builds.
 The source was developed with substantial AI assistance; physical device testing was performed
 by the project owner. Automated checks and exact source/build scope are recorded in VERIFICATION.md.
 Public source history has been checked for credentials, local workstation paths and private data.
-The existing APK contains an embedded third-party build path and is not included in this public
-source publication. Build from source using your toolchain, or ask about a distributable test build.
+Android preview APKs for generic Android and Bigme, matching source and plugin ZIPs are available
+under [Releases](https://github.com/josephm1/kalamos-koreader/releases). The third-party runtime build
+path has been removed by a source patch. See [release/build notes](docs/RELEASE-2026-10-19.md).
+
+Separate maintained plugin sources: [kalamos-koreader-plugins](https://github.com/josephm1/kalamos-koreader-plugins).

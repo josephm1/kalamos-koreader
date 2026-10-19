@@ -1,0 +1,49 @@
+diff --git a/thirdparty/glib/CMakeLists.txt b/thirdparty/glib/CMakeLists.txt
+index 3bec375..4d9facc 100644
+--- a/thirdparty/glib/CMakeLists.txt
++++ b/thirdparty/glib/CMakeLists.txt
+@@ -1,5 +1,6 @@
+ list(APPEND PATCH_FILES
+     # We only care about `libglib-2.0.a`.
++    android-runtime-paths.patch
+     libglib-only.patch
+     # We don't need regex support, and removing it gets rid of the pcre2 dependency.
+     no_regex_support.patch
+diff --git a/thirdparty/glib/android-runtime-paths.patch b/thirdparty/glib/android-runtime-paths.patch
+new file mode 100644
+index 0000000..d99fa7d
+--- /dev/null
++++ b/thirdparty/glib/android-runtime-paths.patch
+@@ -0,0 +1,32 @@
++--- a/meson.build
+++++ b/meson.build
++@@ -2272,7 +2272,12 @@
++ glib_conf.set('HAVE_DCGETTEXT', 1)
++ glib_conf.set('HAVE_GETTEXT', 1)
++ 
++-glib_conf.set_quoted('GLIB_LOCALE_DIR', join_paths(glib_datadir, 'locale'))
+++# Android uses app-provided dictionaries; never embed the host staging prefix.
+++if host_machine.system() == 'android'
+++  glib_conf.set_quoted('GLIB_LOCALE_DIR', '/usr/share/locale')
+++else
+++  glib_conf.set_quoted('GLIB_LOCALE_DIR', join_paths(glib_datadir, 'locale'))
+++endif
++ 
++ glib_conf.set_quoted('GLIB_LOCALSTATEDIR', glib_localstatedir)
++ glib_conf.set_quoted('GLIB_RUNSTATEDIR', glib_runstatedir)
++--- a/glib/libcharset/meson.build
+++++ b/glib/libcharset/meson.build
++@@ -1,6 +1,12 @@
+++# Keep charset fallback independent of the build machine's staging directory.
+++charsetalias_runtime_dir = glib_charsetaliasdir
+++if host_machine.system() == 'android'
+++  charsetalias_runtime_dir = '/usr/lib'
+++endif
+++
++ charset_lib = static_library('charset', 'localcharset.c',
++   include_directories : configinc,
++   pic : true,
++-  c_args : [ '-DGLIB_CHARSETALIAS_DIR="@0@"'.format(glib_charsetaliasdir) ],
+++  c_args : [ '-DGLIB_CHARSETALIAS_DIR="@0@"'.format(charsetalias_runtime_dir) ],
++   gnu_symbol_visibility : 'hidden',
++ )
