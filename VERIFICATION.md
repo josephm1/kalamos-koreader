@@ -23,3 +23,12 @@ physical pen/tablet acceptance is pending the owner's tests.
 
 Complete generic native-ink candidate SHA256:82693d0108c4000f4ec82d861f6dfe8c27b417760308b8e089b5861ab7779043. Signature and packaged Lua verified;
 DEX includes Standard provider/bridge and no Bigme/hidden-API implementation. No device install.
+
+## Public source audit
+
+All published revisions and tracked inputs scanned for common credential formats, private keys,
+workstation paths, private device identifiers and unintended data/binary files. A historical local
+handover path was removed; author/committer email metadata uses the account's GitHub privacy address.
+No API keys, credentials, certificates, notebooks or personal books found in published source.
+Existing generic APK is excluded because its third-party dictionary executable embeds a local build
+path. The owner confirms working generic Android behavior on Huion Note E; no wider hardware claim.

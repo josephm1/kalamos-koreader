@@ -1,3 +1,16 @@
+## Public source audit — 19 October 2026
+
+Owner authorized making this repository public after a confidentiality audit. Reviewed all tracked
+files and every published revision. No credentials, signing keys, app certificates, books, notebooks,
+local.properties or build outputs are published. Removed a workstation path from historical handover
+text and normalized commit email metadata to the owner's GitHub privacy address. Source manifests
+were regenerated. Private development history backups remain outside this repository.
+
+The owner confirms generic Android operation on Huion Note E; development also targeted Bigme
+e-ink. Scope is limited to these observations, not all Android/e-ink devices. No upstream PR.
+An APK audit found a build-machine path in the bundled third-party dictionary executable; that APK
+is not published here. Source and build instructions are the public testing route for now.
+
 ## Generic Android native ink — 19 October 2026
 
 Neutral InkEditingController replaces direct Bigme dependencies. Build-time Standard/Bigme provider

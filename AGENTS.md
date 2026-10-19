@@ -10,3 +10,5 @@ Read README.md, HANDOVER.md and docs/devices/bigme/INK-WRITING-GUIDE.md first.
 - Native reader lifecycle/bridge: integrations/koreader/android-bridge.
 
 Keep this build independent of sibling checkouts. Do not restore retired companion apps, AI mapper routes, private data or certificates. Preserve book IDs, handwriting storage paths and legacy saved vectors. User performs physical-device testing; automated tests/builds do not establish panel acceptance.
+
+Public source: do not commit credentials, local workstation paths, private notebooks or device captures.
