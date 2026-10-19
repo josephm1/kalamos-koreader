@@ -73,6 +73,7 @@ function Kalamos:init()
         message(_("Handwriting storage could not be configured.") .. "\n" .. tostring(config_err))
         return
     end
+    self.motion_forwarding = result.motionForwarding == true
     self.ink_available = true
     logger.warn("Kalamos JNI bridge ready via", result.activity)
     self.ui.menu:registerToMainMenu(self)
@@ -248,6 +249,9 @@ function Kalamos:activatePenSuppression()
                 logger.warn("Kalamos classified Android input device", device_id,
                     is_pen and "as pen" or "as touch")
             end
+            -- Generic devices may report finger + pen through the same input device. Classify the
+            -- contact itself; never turn a finger into a pen merely because its device has a stylus.
+            if self.motion_forwarding then is_pen = tonumber(android.lib.AMotionEvent_getToolType(event, 0)) == 2 end
             if not is_pen then return delegate(event) end
             -- Full-page handwriting belongs exclusively to the low-latency Bigme surface.
             -- In normal reading, preserve the event but correct Bigme's TOOL_TYPE_FINGER report
@@ -258,7 +262,12 @@ function Kalamos:activatePenSuppression()
             self.pen_claimed_devices[device_id] = claimed
             if action == 1 or action == 3 then self.pen_claimed_devices[device_id] = nil end
             -- Own the complete gesture through UP/CANCEL even if the writing tool closes first.
-            if claimed then return true end
+            if claimed then
+                if self.motion_forwarding then
+                    require("penmotion").forward(android.lib, event, AndroidBridge)
+                end
+                return true
+            end
             return false, 1
         end
         backend.setMotionEventFilter(self.pen_motion_filter)

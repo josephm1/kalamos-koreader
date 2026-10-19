@@ -35,13 +35,15 @@ index e3c32d4..81bcc19 100644
          main {
              assets.srcDirs = [ '../assets', assetsPath ]
              jniLibs.srcDirs = [ libsPath ]
-@@ -134,6 +138,10 @@ repositories {
+@@ -134,6 +138,12 @@ repositories {
  }
  
  dependencies {
 +    if (kalamosInk) {
 +        implementation fileTree(dir: 'libs', include: ['*.aar'])
-+        implementation "org.lsposed.hiddenapibypass:hiddenapibypass:4.3"
++        if (providers.gradleProperty('kalamosDevice').getOrElse('bigme') == 'bigme') {
++            implementation "org.lsposed.hiddenapibypass:hiddenapibypass:4.3"
++        }
 +    }
      implementation "androidx.core:core-ktx:$androidx_core_version"
      implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"

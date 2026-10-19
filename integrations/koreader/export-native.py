@@ -8,7 +8,7 @@ import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-MODULES = ('foundation/device-api', 'devices/bigme', 'integrations/koreader/android-bridge')
+MODULES = ('foundation/device-api', 'devices/standard', 'devices/bigme', 'integrations/koreader/android-bridge')
 parser = argparse.ArgumentParser()
 parser.add_argument('output', type=Path, help='new/empty directory for the standalone native source build')
 args = parser.parse_args()
@@ -52,19 +52,19 @@ for name in ('gradlew', 'gradle/wrapper/gradle-wrapper.jar', 'gradle/wrapper/gra
 (output / 'settings.gradle.kts').write_text('''pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
 dependencyResolutionManagement { repositories { google(); mavenCentral() } }
 rootProject.name = "koreader-native-ink-review"
-include(":foundation:device-api", ":devices:bigme", ":integrations:koreader:android-bridge")
+include(":foundation:device-api", ":devices:standard", ":devices:bigme", ":integrations:koreader:android-bridge")
 ''')
 (output / 'gradle.properties').write_text('android.useAndroidX=true\n')
 (output / '.gitignore').write_text('.gradle/\n**/build/\nlocal.properties\n')
 (output / 'README.md').write_text('''# Standalone native ink build — local review export
 
-This immutable source snapshot builds only the device API, Bigme provider and reader bridge.
+This immutable source snapshot builds the device API, Standard/Bigme providers and reader bridge.
 Canonical development remains in Kalamos. No other apps, certificates, secrets, books, prebuilt
 vendor SDK binaries, private settings or sibling repositories are needed.
 
 Use JDK 17 and Android SDK platform 34; set ANDROID_HOME or your own local.properties, then run:
 
-    ./gradlew :integrations:koreader:android-bridge:assembleDebug :integrations:koreader:android-bridge:assembleRelease --no-daemon
+    ./gradlew -Pkalamos.device=standard :integrations:koreader:android-bridge:assembleDebug :integrations:koreader:android-bridge:assembleRelease --no-daemon
 
 The wrapper pins Gradle 8.14.5; plugins pin AGP 8.2.2/Kotlin 1.9.22. The source manifest records
 exact input hashes. Original exported Kalamos code is AGPL-3.0-or-later as approved by the rights holder;

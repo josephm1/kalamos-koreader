@@ -1,6 +1,6 @@
 # Kalamos handwriting for KOReader
 
-The active integration provides Bigme pen input, full-page handwriting, handwritten sticky notes,
+The active integration provides standard Android stylus and Bigme pen input, full-page handwriting, handwritten sticky notes,
 pen text selection, saved-ink replay and Android lifecycle support for EPUB/PDF reading.
 The Kalamos reader tab contains handwriting and sticky-note controls only.
 
@@ -13,6 +13,38 @@ and `/sdcard/Kalamos/BookData/<book-id>/ink-annotations.json` path so existing s
 remain available. The active store reads/writes only ink annotations; it does not extract prose,
 generate maps, call AI or read old map/evidence files. Do not delete the BookData directory as part
 of generated-data cleanup: it also contains user handwriting.
+
+## Generic Android pen build — 19 October 2026
+
+Select the public Android provider when preparing a modified reader:
+
+```sh
+KALAMOS_DEVICE=standard ./integrations/koreader/build.sh /path/to/koreader
+cd /path/to/koreader
+GRADLE_FLAGS='-PkalamosInk=true -PkalamosDevice=standard' ./kodev build android-arm64 --debug
+GRADLE_FLAGS='-PkalamosInk=true -PkalamosDevice=standard' make TARGET=android-arm64 KODEBUG=1 update
+```
+
+The default preparation remains Bigme for compatibility; use KALAMOS_DEVICE=bigme explicitly
+when desired. The selected build packages exactly one provider. The generic launcher excludes
+Bigme classes and hidden-API bypass. The stock launcher (without kalamosInk) remains available
+without any custom handwriting bridge. Do not confuse stock generic reading with the generic
+**native-ink** build above.
+
+The standard provider is the same public MotionEvent/SurfaceView pen layer used by Notes.
+KOReader's NativeActivity has a separate native input queue: the Lua filter forwards owned stylus
+contacts, including coalesced samples and pressure, through the narrow launcher adapter. The
+bridge normalizes incremental samples into one completed stroke, fences queued events by session,
+and waits for a valid Android Surface before enabling capture. Bigme keeps its daemon delivery;
+it never uses this forwarding path. Generic tool erasing/selection use capture-only gestures and
+ordinary Android presentation, without firmware waveforms. Existing notebook/annotation IDs and
+save/layout logic are retained. Finger input stays with reader controls; hardware-specific eraser
+buttons, palm rejection, coordinate placement, latency and lifecycle need owner tablet testing.
+
+Automated tests and APK packaging establish a candidate, not physical pen acceptance. Ordinary
+Android devices must expose a standard stylus for this path. No arbitrary manufacturer fast-ink
+SDK is bundled. The independent plugin repository holds Lua/sharing sources; the InkSDK repository
+holds device-api and Standard/Bigme providers, without Notes editor or user data.
 
 ## 2026-10-18 — Reader writing controls and EPUB spaces
 

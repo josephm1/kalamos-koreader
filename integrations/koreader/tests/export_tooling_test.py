@@ -18,7 +18,7 @@ class NativeSourceExportTest(unittest.TestCase):
             source=root/'source'
             subprocess.run([sys.executable,str(INTEGRATION/'export-native.py'),str(source)],check=True,capture_output=True)
             manifest=json.loads((source/'source-manifest.json').read_text())
-            self.assertEqual(len(manifest['modules']),3)
+            self.assertEqual(set(manifest['modules']), {'foundation/device-api','devices/standard','devices/bigme','integrations/koreader/android-bridge'})
             self.assertNotIn('local.properties',manifest['files'])
             for module in manifest['modules']:
                 self.assertIn(module+'/LICENSE',manifest['files'])

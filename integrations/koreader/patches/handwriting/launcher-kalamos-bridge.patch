@@ -3,7 +3,7 @@ new file mode 100644
 index 0000000..5572940
 --- /dev/null
 +++ b/app/src/kalamos/java/org/koreader/launcher/KalamosInkAdapter.kt
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +package org.koreader.launcher
 +
 +import android.app.Activity
@@ -13,6 +13,7 @@ index 0000000..5572940
 +internal object KalamosInkAdapter {
 +    fun ping(activity: Activity): String = KalamosBridge.ping(activity)
 +    fun startInk(activity: Activity, bounds: String): String = KalamosBridge.startInk(activity, bounds)
++    fun penMotion(activity: Activity, json: String): String = KalamosBridge.penMotion(activity, json)
 +    fun stopInk(activity: Activity): String = KalamosBridge.stopInk(activity)
 +    fun pauseInk(activity: Activity): String = KalamosBridge.pauseInk(activity)
 +    fun drainInk(): String = KalamosBridge.drainInk()
@@ -23,12 +24,13 @@ diff --git a/app/src/main/java/org/koreader/launcher/MainActivity.kt b/app/src/m
 index 04b9133..89faf01 100644
 --- a/app/src/main/java/org/koreader/launcher/MainActivity.kt
 +++ b/app/src/main/java/org/koreader/launcher/MainActivity.kt
-@@ -97,6 +97,14 @@ class MainActivity : NativeActivity(), LuaInterface,
+@@ -97,6 +97,15 @@ class MainActivity : NativeActivity(), LuaInterface,
          System.loadLibrary("luajit")
      }
  
 +    fun kalamosPing(): String = KalamosInkAdapter.ping(this)
 +    fun kalamosStartInk(boundsJson: String): String = KalamosInkAdapter.startInk(this, boundsJson)
++    fun kalamosPenMotion(json: String): String = KalamosInkAdapter.penMotion(this, json)
 +    fun kalamosStopInk(): String = KalamosInkAdapter.stopInk(this)
 +    fun kalamosPauseInk(): String = KalamosInkAdapter.pauseInk(this)
 +    fun kalamosDrainInk(): String = KalamosInkAdapter.drainInk()
@@ -43,7 +45,7 @@ new file mode 100644
 index 0000000..48f19bd
 --- /dev/null
 +++ b/app/src/stock/java/org/koreader/launcher/KalamosInkAdapter.kt
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,17 @@
 +package org.koreader.launcher
 +
 +import android.app.Activity
@@ -54,6 +56,7 @@ index 0000000..48f19bd
 +    private const val UNAVAILABLE = "{\"ok\":false,\"err\":\"Native handwriting is not enabled in this build\"}"
 +    fun ping(activity: Activity): String = "{\"ok\":true,\"apiVersion\":1,\"inkAvailable\":false}"
 +    fun startInk(activity: Activity, bounds: String): String = UNAVAILABLE
++    fun penMotion(activity: Activity, json: String): String = UNAVAILABLE
 +    fun stopInk(activity: Activity): String = UNAVAILABLE
 +    fun pauseInk(activity: Activity): String = UNAVAILABLE
 +    fun drainInk(): String = UNAVAILABLE

@@ -102,6 +102,9 @@ end
 function Bridge.startInk(bounds)
     return invoke("kalamosStartInk", "(Ljava/lang/String;)Ljava/lang/String;", { rapidjson.encode(bounds) })
 end
+function Bridge.penMotion(event)
+    return invoke("kalamosPenMotion", "(Ljava/lang/String;)Ljava/lang/String;", { rapidjson.encode(event) })
+end
 function Bridge.stopInk()
     return invoke("kalamosStopInk", "()Ljava/lang/String;", {})
 end

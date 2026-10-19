@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+device="${KALAMOS_DEVICE:-bigme}"
+if [[ "$device" != standard && "$device" != bigme ]]; then echo "KALAMOS_DEVICE must be standard or bigme" >&2; exit 2; fi
 check_only=false
 if [[ "${1:-}" == --check-only ]]; then check_only=true; shift; fi
 if [[ $# -ne 1 ]]; then
@@ -72,16 +74,18 @@ if [[ ! "$revision" =~ ^v[0-9]{4}\.[0-9]{2} ]]; then
 fi
 "$repo_root/tools/gradle.sh" \
   :foundation:device-api:assembleDebug \
-  :devices:bigme:assembleDebug \
+  ":devices:$device:assembleDebug" \
   :integrations:koreader:android-bridge:assembleDebug \
-  -Pkalamos.device=bigme --no-daemon
+  "-Pkalamos.device=$device" --no-daemon
 for index in "${!pending_patches[@]}"; do
   git -C "${pending_repositories[$index]}" apply "${pending_patches[$index]}"
 done
 cp "$integration_dir/engine/writingspace.inc" "$koreader_dir/base/writingspace.inc"
 mkdir -p "$launcher_dir/app/libs"
 cp "$repo_root/foundation/device-api/build/outputs/aar/device-api-debug.aar" "$launcher_dir/app/libs/kalamos-device-api.aar"
-cp "$repo_root/devices/bigme/build/outputs/aar/bigme-debug.aar" "$launcher_dir/app/libs/kalamos-bigme.aar"
+# Select exactly one provider; stale AARs must never merge two provider manifests.
+rm -f "$launcher_dir/app/libs/kalamos-bigme.aar" "$launcher_dir/app/libs/kalamos-standard.aar"
+cp "$repo_root/devices/$device/build/outputs/aar/$device-debug.aar" "$launcher_dir/app/libs/kalamos-$device.aar"
 cp "$repo_root/integrations/koreader/android-bridge/build/outputs/aar/android-bridge-debug.aar" "$launcher_dir/app/libs/kalamos-koreader-bridge.aar"
 rm -rf "$koreader_dir/plugins/kalamos.koplugin"
 cp -a "$integration_dir/kalamos.koplugin" "$koreader_dir/plugins/kalamos.koplugin"
@@ -93,8 +97,8 @@ writing_revision="$(sha256sum "$integration_dir/engine/writingspace.inc" \
 printf 'return "%s"\n' "$writing_revision" > "$koreader_dir/plugins/kalamos.koplugin/writing-revision.lua"
 cp "$integration_dir"/kalamos.koplugin/resources/icons/kalamos*.svg "$koreader_dir/resources/icons/mdlight/"
 echo "Kalamos plugin and optional bridge prepared in $koreader_dir"
-echo "Normal build: GRADLE_FLAGS=-PkalamosInk=true ./kodev build android-arm64"
-echo "Debug build:  GRADLE_FLAGS=-PkalamosInk=true ./kodev build android-arm64 --debug"
-echo "Then package the APK: GRADLE_FLAGS=-PkalamosInk=true make TARGET=android-arm64 update"
-echo "For a debug APK use:  GRADLE_FLAGS=-PkalamosInk=true make TARGET=android-arm64 KODEBUG=1 update"
+echo "Normal build: GRADLE_FLAGS='-PkalamosInk=true -PkalamosDevice=$device' ./kodev build android-arm64"
+echo "Debug build:  GRADLE_FLAGS='-PkalamosInk=true -PkalamosDevice=$device' ./kodev build android-arm64 --debug"
+echo "Then package the APK: GRADLE_FLAGS='-PkalamosInk=true -PkalamosDevice=$device' make TARGET=android-arm64 update"
+echo "For a debug APK use:  GRADLE_FLAGS='-PkalamosInk=true -PkalamosDevice=$device' make TARGET=android-arm64 KODEBUG=1 update"
 echo "Without that property the launcher retains stock dependencies and SDK floor."

@@ -1,3 +1,15 @@
+## Generic Android native ink — 19 October 2026
+
+Neutral InkEditingController replaces direct Bigme dependencies. Build-time Standard/Bigme provider
+selection, native-queue stylus forwarding, coalesced samples/pressure, session fencing, valid-Surface
+readiness and incremental-to-complete stroke normalization implemented. Standard capture-only
+editing, excluded controls and cropped chrome support preserve saved ink and host ownership.
+Generic builds omit Bigme/hidden-API implementation. Existing Bigme native tests still pass.
+Native tests:42 API/provider +15 reader tests pass. Portable Lua, eight integration checks and
+export/asset-revision tests pass. Generic reader debug/release native AARs build independently;
+complete generic native-ink APK is built from the prepared current engine. Physical tablet
+acceptance belongs to the user. Separate private plugin and InkSDK repositories preserve boundaries.
+
 ## Current-source verification — 19 October 2026
 
 Verified the integration plugins, engine patches and native modules against the canonical current

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
 const read = rel => fs.readFileSync(path.join(root, rel), 'utf8')
 
-test('private KOReader launcher includes the compiled Bigme bridge through a narrow patch', () => {
+test('private KOReader launcher selects a neutral native ink bridge through a narrow patch', () => {
   const bridge = read('integrations/koreader/android-bridge/src/main/java/com/kalamos/koreader/KalamosBridge.kt')
   const controller = read('devices/bigme/src/main/java/com/kalamos/device/bigme/BigmeInkController.kt')
   const hiddenApi = read('devices/bigme/src/main/java/com/kalamos/device/bigme/BigmeHiddenApiAccess.kt')
@@ -16,7 +16,14 @@ test('private KOReader launcher includes the compiled Bigme bridge through a nar
   const luaBridge = read('integrations/koreader/kalamos.koplugin/androidbridge.lua')
   const patch = read('integrations/koreader/patches/handwriting/launcher-optional-native-build.patch')
   const activityPatch = read('integrations/koreader/patches/handwriting/launcher-kalamos-bridge.patch')
-  assert.match(bridge, /BigmeInkController/)
+  assert.match(bridge, /DeviceRegistry.require/)
+  assert.match(bridge, /InkEditingController/)
+  assert.doesNotMatch(bridge, /import com\.kalamos\.device\.bigme/)
+  assert.match(bridge, /fun penMotion\(activity: Activity, json: String\)/)
+  assert.match(activityPatch, /fun kalamosPenMotion/)
+  assert.match(luaBridge, /kalamosPenMotion/)
+  assert.match(read('integrations/koreader/build.sh'), /KALAMOS_DEVICE/)
+  assert.match(patch, /kalamosDevice/)
   assert.match(bridge, /setWritingBounds/)
   assert.match(bridge, /onStrokeComplete/)
   assert.match(bridge, /replayInk/)
@@ -97,7 +104,7 @@ test('private KOReader launcher includes the compiled Bigme bridge through a nar
   assert.match(stickyWidget, /callback = self\.save_callback/)
   assert.match(plugin, /callPenHighlight\(highlight, "onHold"/)
   assert.match(plugin, /highlight\.long_hold_reached = true/)
-  assert.match(plugin, /if claimed then return true end/)
+  assert.match(plugin, /if claimed then[\s\S]*?require\("penmotion"\)\.forward[\s\S]*?return true/)
   assert.match(plugin, /if not is_pen then return delegate\(event\) end/)
   const inputPatch = read('integrations/koreader/patches/android-input/android-native-motion-filter.patch')
   assert.match(inputPatch, /consume, tool_override = motionEventFilter\(motion_event\)/)
