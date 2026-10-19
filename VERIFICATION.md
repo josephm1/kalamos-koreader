@@ -32,3 +32,9 @@ handover path was removed; author/committer email metadata uses the account's Gi
 No API keys, credentials, certificates, notebooks or personal books found in published source.
 Existing generic APK is excluded because its third-party dictionary executable embeds a local build
 path. The owner confirms working generic Android behavior on Huion Note E; no wider hardware claim.
+
+## Attribution update — 19 October 2026
+
+Documentation/licence-only update: upstream credits, full licence texts and component scopes
+checked. Ink modules are GPL-3.0-only; reader AGPL and launcher/JNI MIT terms stay separate.
+No runtime source changed; previous behavior/build results above remain historical evidence.

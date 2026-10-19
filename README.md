@@ -4,6 +4,14 @@ Source repository for the Kalamos KOReader adaptation: standard Android stylus a
 
 This is the complete Kalamos integration source and native build dependencies, exported from the active workspace on 19 October 2026. It is an integration repository: stock KOReader, its base engine and Android launcher are upstream dependencies pinned in `integrations/review/upstream.lock.json`. Other Kalamos apps, MyScript certificates, private books/notes, device captures, local credentials and build outputs are excluded.
 
+## Upstream credit
+
+Built on **[KOReader and its contributors](https://github.com/koreader/koreader)**,
+[koreader-base](https://github.com/koreader/koreader-base) and the
+[Android LuaJIT launcher](https://github.com/koreader/android-luajit-launcher).
+The ink integration also builds on **[InkSDK by Ed Wei (imedwei)](https://github.com/imedwei/inksdk)**.
+See [all upstream credits, licence texts and distribution requirements](THIRD_PARTY_NOTICES.md).
+
 ## Contents
 
 - `integrations/koreader/kalamos.koplugin`: reader handwriting and writing spaces.
@@ -50,7 +58,7 @@ Read `docs/devices/bigme/INK-WRITING-GUIDE.md` before modifying native ink behav
 
 ## Licensing
 
-Original selected Kalamos code retains the owner-approved AGPL-3.0-or-later terms. Module/plugin LICENSE and NOTICE files preserve scope and third-party exceptions. KOReader and its engine/launcher retain their own upstream licenses. This is an independently maintained integration, not an official KOReader release. No upstream pull request is part of this publication.
+Kalamos reader plugins and bridge use AGPL-3.0-or-later. The ink modules use GPL-3.0-only. Module/plugin LICENSE and NOTICE files preserve scope and third-party exceptions. KOReader and its engine/launcher retain their own upstream licenses. This is an independently maintained integration, not an official KOReader release. No upstream pull request is part of this publication.
 
 ## Generic Android handwriting candidate
 
